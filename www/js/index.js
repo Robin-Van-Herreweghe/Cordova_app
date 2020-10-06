@@ -24,41 +24,35 @@ document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
     // Cordova is now initialized. Have fun!
-    cordova.plugins.CordovaMqTTPlugin.connect({
-        url:"tcp://localhost:1883", //a public broker used for testing purposes only. Try using a self hosted broker for production.
-        port:1883,
-        clientId:"Cordova_Test",
-        connectionTimeout:3000,
-        username:"uname",
-        password:'pass'
-        
-    })
+
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
     document.getElementById('deviceready').classList.add('ready');
-    
-    navigator.camera.getPicture(onSuccess, onFail, { quality: 25,
-        destinationType: Camera.DestinationType.DATA_URL
-    });
-    
-    function onSuccess(imageData) {
+
+    navigator.camera.getPicture(onSuccess,onFail, { quality: 50, 
+        destinationType: Camera.DestinationType.FILE_URI});
+
+    function onSuccess(imageURI){
         var image = document.getElementById('myImage');
-        image.src = "data:image/jpeg;base64," + imageData;
-        cordova.plugins.CordovaMqTTPlugin.publish({
-            topic:"Robin",
-            payload:"hello from the plugin",
-            qos:0,
-            retain:false,
-            success:function(s){
-         
-            },
-            error:function(e){
-         
-            }
-         })
+        image.src = imageURI;
     }
-    
-    function onFail(message) {
+
+    function onFail(message){
+        alert('Failed because: ' + message);
+    }
+}
+
+function onCameraOpen(){
+    navigator.camera.getPicture(onSuccess,onFail, { quality: 50, 
+        destinationType: Camera.DestinationType.FILE_URI});
+
+    function onSuccess(imageURI){
+        var image = document.getElementById('myImage');
+        image.src = imageURI;
+    }
+
+    function onFail(message){
         alert('Failed because: ' + message);
     }
 
+    
 }
