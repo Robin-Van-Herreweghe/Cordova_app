@@ -46,17 +46,23 @@ function onDeviceReady() {
 
 function onCameraOpen(){
     cordova.plugins.CordovaMqTTPlugin.connect({
-        url:"tcp://test.mosquitto.org", //a public broker used for testing purposes only. Try using a self hosted broker for production.
+        url:"tcp://test.mosquitto.org", //a public broker used for testing purposes only. Try using a self hosted broker for production. 
+        connectionTimeout:3000,
         port:"1883"
     });
-    cordova.plugins.CordovaMqTTPlugin.subscribe({
-        topic:"MQTT",
-        qos:0
-    });
-    cordova.plugins.CordovaMqTTPlugin.publish({
-        topic:"MQTT",
-        payload:"Hello from cordova"
-    });
+
+    var delayInMilliseconds = 2000; //1 second
+    setTimeout(function() {
+        cordova.plugins.CordovaMqTTPlugin.subscribe({
+            topic:"MQTT",
+            qos:0
+        });
+        cordova.plugins.CordovaMqTTPlugin.publish({
+            topic:"MQTT",
+            payload:"Hello from cordova"
+        });
+    }, delayInMilliseconds);
+
 
     navigator.camera.getPicture(onSuccess,onFail, { quality: 50, 
         destinationType: Camera.DestinationType.FILE_URI});
