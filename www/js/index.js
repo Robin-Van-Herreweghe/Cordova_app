@@ -21,6 +21,7 @@
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 
 document.addEventListener('deviceready', onDeviceReady, false);
+document.getElementById("btnCameroOpen").addEventListener("click", onCameraOpen);
 
 function onDeviceReady() {
     // Cordova is now initialized. Have fun!
@@ -34,6 +35,7 @@ function onDeviceReady() {
     function onSuccess(imageURI){
         var image = document.getElementById('myImage');
         image.src = imageURI;
+
     }
 
     function onFail(message){
@@ -41,18 +43,33 @@ function onDeviceReady() {
     }
 }
 
+
 function onCameraOpen(){
+    cordova.plugins.CordovaMqTTPlugin.connect({
+        url:"tcp://test.mosquitto.org", //a public broker used for testing purposes only. Try using a self hosted broker for production.
+        port:"1883"
+    });
+    cordova.plugins.CordovaMqTTPlugin.subscribe({
+        topic:"MQTT",
+        qos:0
+    });
+    cordova.plugins.CordovaMqTTPlugin.publish({
+        topic:"MQTT",
+        payload:"Hello from cordova"
+    });
+
     navigator.camera.getPicture(onSuccess,onFail, { quality: 50, 
         destinationType: Camera.DestinationType.FILE_URI});
 
     function onSuccess(imageURI){
         var image = document.getElementById('myImage');
         image.src = imageURI;
+
     }
 
     function onFail(message){
         alert('Failed because: ' + message);
     }
-
     
+
 }
